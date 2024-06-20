@@ -1,0 +1,260 @@
+{% extends 'public.html' %}
+{% block content %}
+    <div class="container">
+        <div class="panel panel-info">
+            <h3 style="text-align: center">分组管理</h3>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel panel-heading">
+                <lable>
+                    <input id="btnAdd" type="button" class="btn btn-primary " value="新建分组">
+                </lable>
+            </div>
+            <div class="panel-group">
+                <table class="table table-bordered">
+                    <theader>
+                        <tr>
+                            <th>ID</th>
+                            <th>分组编号</th>
+                            <th>分组名称</th>
+                            <th>组长</th>
+                            <th>更多</th>
+                            <th>修改时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </theader>
+                    <tbody>
+                    {% for obj in queryset %}
+                        <tr uid="{{ obj.id }}">
+                            <td>{{ obj.id }}</td>
+                            <td>{{ obj.group_code }}</td>
+                            <td>{{ obj.group_name }}</td>
+                            <td>{{ obj.leader_name }}</td>
+                            <td>{{ obj.desc }}</td>
+                            <td>{{ obj.create_time }}</td>
+                            <td>
+                                {#                                <a class="btn btn-primary btn-xs" href="">编辑</a>#}
+                                <input uid={{ obj.id }} type="button" class="btn btn-primary btn-xs btn-edit"
+                                       value="编辑">
+                                {#                                <a class="btn btn-danger btn-xs" href="#">删除</a>#}
+                                <input uid={{ obj.id }} type="button" class="btn btn-danger btn-xs Btn-delete"
+                                       value="删除">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <ul class="pagination">
+            {{ page_string }}
+        </ul>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">新建分组</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="formAdd">
+                        <div class="clearfix">
+                            {% for field in form %}
+                                <div class="col col-xs-6">
+                                    <div class="form form-group">
+                                        <label class="control-label">{{ field.label }}</label>
+                                        {{ field }}
+                                        <span class="error-msg" style="color:red;display: inline-block"></span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                    <button id="btnSave" type="button" class="btn btn-primary">保 存</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4>删除分组</h4>
+                <p  style="margin: 15px 0;">删除后将无法恢复，确定要删除吗？</p>
+                <p style="text-align: right">
+                    <button id="saveDelete" type="button" class="btn btn-danger">确 定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                </p>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        var EDIT_ID;
+        var DELETE_ID;
+        $(function () {
+            GroupBtnAddClick()
+            GroupBtnAdd()
+            GroupBtnEditClick()
+            GroupBtnDeleteClick()
+            GroupBtnDeleteSave()
+        })
+
+        function GroupBtnAddClick() {
+            $('#btnAdd').click(function () {
+                EDIT_ID = undefined;
+                $("#formAdd")[0].reset();
+                $("#myModal").modal('show');
+                $('#myModalLabel').text("新建分组");
+
+            })
+        }
+
+        function GroupBtnAdd() {
+            $('#btnSave').click(function () {
+                $('.error-msg').empty();
+                if (EDIT_ID) {
+                    toEdit();
+                } else {
+                    toAdd();
+                }
+            })
+        }
+
+
+        function toAdd() {
+            $.ajax({
+                url: "/group/add/",
+                type: 'post',
+                data: $('#formAdd').serialize(),
+                dataType: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+                        location.reload();
+                        //将jQuery($('#formAdd'))对象转换成DOM对象($('#formAdd')[0])后使用DOM对象的方法reset（）可以清空表单
+                        $("#formAdd")[0].reset();
+                        $("#myModal").modal('hide')
+
+                    } else {
+                        $.each(res.error, function (name, errorList) {
+                            $("#id_" + name).next().text(errorList[0])
+                        })
+                    }
+                }
+            })
+        }
+
+        function toEdit() {
+            //显示对话框
+            $.ajax({
+                url: '/group/edit/?uid=' + EDIT_ID,
+                type: 'post',
+                data: $('#formAdd').serialize(),
+                dataType: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+
+                        //刷新页面
+                        location.reload();
+
+                        //将jQuery($('#formAdd'))对象转换成DOM对象($('#formAdd')[0])后使用DOM对象的方法reset（）可以清空表单
+                        $('#formAdd')[0].reset();
+
+                        // 关闭对话框
+                        $("#myModal").modal('hide')
+                    } else {
+                        //保存失败页面报错
+                        $.each(res.error, function (name, errorList) {
+                            $("#id_" + name).next().text(errorList[0])
+                        })
+                    }
+                }
+            })
+        }
+
+        function GroupBtnEditClick() {
+            $('.btn-edit').click(
+                function () {
+                    var uid = $(this).attr("uid")
+                    //将编辑id赋值给全局变量
+                    EDIT_ID = uid;
+                    //发送ajax去后端获取当前行的数据
+                    $.ajax({
+                        url: "/group/edit/ck/",
+                        type: "get",
+                        data: {
+                            uid: uid
+                        },
+                        dataType: "JSON",
+                        success: function (res) {
+                            if (res.status) {
+                                // 将数据赋值给对话框
+                                $.each(res.data, function (name, value) {
+                                    $("#id_" + name).val(value)
+
+                                })
+                                //设置对话框的标题
+                                $("#myModalLabel").text("编辑分组");
+                                //展示对话框
+                                $("#myModal").modal("show");
+                            }
+
+                        }
+                    })
+
+                }
+            )
+        }
+
+        function GroupBtnDeleteClick() {
+            $('.Btn-delete').click(function () {
+                // 为全局变量赋值
+                DELETE_ID = $(this).attr("uid")
+
+                //显示删除对话框
+                $("#DeleteModal").modal('show');
+
+            })
+        }
+
+        function GroupBtnDeleteSave() {
+            //点击确定删除按钮
+            $("#saveDelete").click(
+                function () {
+
+
+                    //发送ajax请求，删除数据
+
+                    $.ajax({
+                        url: '/group/delete/',
+                        type: 'GET',
+                        dataType: 'JSON',
+                        data: {uid: DELETE_ID},
+                        success: function (res) {
+
+                            {#console.log(res)#}
+                            {#alert("删除成功")#}
+                            location.reload()
+
+                        }
+                    })
+                }
+            )
+        }
+
+    </script>
+{% endblock %}

@@ -1,0 +1,325 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon Admin Panel">
+    <meta name="author" content="">
+
+    <title>Neon | Charts</title>
+
+
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'plugins/bootstrap-datepicker-1.10.0/dist/css/bootstrap-datepicker.min.css' %}">
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, "Noto Sans", sans-serif, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.42857143;
+            color: #949494;
+            background-color: #ffffff;
+        }
+
+        .page-container {
+            position: absolute;
+            position: relative;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            padding-left: 280px;
+            width: 100%;
+        }
+
+        .page-container .sidebar-menu {
+            position: absolute;
+            width: 280px;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background: #303641;
+            color: #aaabae;
+            z-index: 1;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .page-container .sidebar-menu .logo-env {
+            width: 100%;
+            padding: 35px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .page-container .sidebar-menu .logo-env div {
+            display: block;
+            vertical-align: middle;
+            white-space: nowrap;
+            float: left;
+        }
+
+        .page-container .sidebar-menu .logo-env > div.sidebar-collapse a {
+            display: inline-block;
+            border: 1px solid #454a54;
+            text-align: center;
+            padding: 0;
+            line-height: 1;
+            font-size: 20px;
+            font-weight: 300;
+            padding: 5px 2px;
+            -webkit-border-radius: 3px;
+            -webkit-background-clip: padding-box;
+            -moz-border-radius: 3px;
+            -moz-background-clip: padding;
+            border-radius: 3px;
+            background-clip: padding-box;
+            -moz-transition: all 200ms ease-in-out;
+            -o-transition: all 200ms ease-in-out;
+            -webkit-transition: all 200ms ease-in-out;
+            transition: all 200ms ease-in-out;
+        }
+
+        .page-container .sidebar-menu .logo-env > div.sidebar-mobile-menu a {
+            display: inline-block;
+            border: 1px solid #454a54;
+            text-align: center;
+            padding: 0;
+            line-height: 1;
+            font-size: 20px;
+            font-weight: 300;
+            padding: 5px 2px;
+            -webkit-border-radius: 3px;
+            -webkit-background-clip: padding-box;
+            -moz-border-radius: 3px;
+            -moz-background-clip: padding;
+            border-radius: 3px;
+            background-clip: padding-box;
+            -moz-transition: all 200ms ease-in-out;
+            -o-transition: all 200ms ease-in-out;
+            -webkit-transition: all 200ms ease-in-out;
+            transition: all 200ms ease-in-out;
+        }
+
+        #main-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        #main-menu li #search {
+            background: #262b34;
+            border-bottom-color: rgba(69, 74, 84, 0.5);
+            position: relative;
+            height: 48px;
+        }
+
+        #search .search-input {
+            background: none;
+            padding: 0;
+            margin: 0;
+            border: none;
+            outline: none;
+            padding: 15px 20px;
+            padding-right: 45px;
+            width: 100%;
+            color: #aaabae;
+            -moz-transition: 350ms opacity ease-in-out;
+            -o-transition: 350ms opacity ease-in-out;
+            -webkit-transition: 350ms opacity ease-in-out;
+            transition: 350ms opacity ease-in-out;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        #main-menu li #search button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: none;
+            padding: 0;
+            margin: 0;
+            border: none;
+            outline: none;
+            color: #aaabae;
+            padding: 15px 20px;
+            padding-top: 13px;
+        }
+
+        #main-menu li {
+            position: relative;
+            margin: 0;
+            font-size: 12px;
+            border-bottom: 1px solid rgba(69, 74, 84, 0.7);
+        }
+
+        #main-menu li i {
+            position: relative;
+            font-size: 15px;
+            margin-right: 5px;
+        }
+
+        
+
+
+    </style>
+
+
+</head>
+<body class="page-body">
+
+<div class="page-container">
+
+    <div class="sidebar-menu">
+
+
+        <header>
+            <!-- logo -->
+            <div class="logo-env">
+                <a href="#">
+                    <img src="{% static 'img/../media/logo@2x.png' %}" width="120" alt="">
+                </a>
+            </div>
+
+            <!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
+            <div>
+                <a href="#" class="with-animation"><!-- add class "with-animation" to support animation -->
+                    <i class="entypo-menu"></i>
+                </a>
+            </div>
+
+        </header>
+
+        <ul id="main-menu" class="">
+
+            <li id="search" class="root-level">
+                <form method="get" action="">
+
+                    <input type="text" class="search-input" name="q"
+                           placeholder="请输入关键字...">
+                    <button type="submit" style="float: right">
+                        <i class="entypo-search">搜索</i>
+                    </button>
+
+                </form>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="entypo-gauge"></i>
+                    <span>父级</span>
+                </a>
+                <ul>
+                    <li>
+                        <a href="#">
+                            <span>子级1</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span>子级2</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+
+                
+
+            </li>
+        </ul>
+
+    </div>
+    <div class="main-content">
+
+        <div class="row">
+            <!-- 占位用 -->
+            <div class="col-md-6 col-sm-8 clearfix">
+            </div>
+
+            <!-- Raw Links -->
+            <div class="col-md-6 col-sm-4 clearfix hidden-xs">
+
+                <ul class="list-inline links-list pull-right">
+                    <li class="sep"></li>
+                    <li class="sep"></li>
+                    <li>
+                        <a href="#" class="btn btn-primary btn-xs">
+                            退出登录 <i class="entypo-logout right"></i>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <hr>
+        <ol class="breadcrumb bc-3">
+            <li>
+                <a href="#"><i class="entypo-home"></i>Welcome</a>
+            </li>
+            <li class="active">
+
+                <strong>范正伟</strong>
+            </li>
+        </ol>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="panel panel-primary">
+
+                    <div class="panel-heading">
+                        <div class="panel-title">测试平台，欢迎你</div>
+                    </div>
+
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <td width="100%">
+                                <strong>总用例</strong>
+                                <br>
+                                <div id="chart10" style="height: 300px"></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <br>
+
+
+        <!-- Footer -->
+        <footer class="main">
+
+
+            Copyright &copy; 2021.Company name All rights reserved.
+
+        </footer>
+    </div>
+
+
+</div>
+
+
+<!-- Bottom Scripts -->
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1-dist/js/bootstrap.min.js' %}"></script>
+<scirpt src="{% static 'plugins/bootstrap-datepicker-1.10.0/js/bootstrap-datepicker.js' %}"></scirpt>
+<script type="text/javascript">
+
+</script>
+
+</body>
+</html>
